@@ -5,12 +5,20 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Automaton {
-	int cont = 0;
-	public String input = "", expression = "", word = "";
+	//Atributos
+	public String input = "", 
+			      expression = "", 
+			      word = "";
+	
+	public int state = 0, 
+			   index = 0, 
+			   initialPosition = 0, 
+			   sizeLock = 0;
+
 	public ArrayList<String> arrayExpressions;
 	Set<Character> s = new HashSet<Character>();
-	public int state = 0, index = 0, indexExpression = 0, initialPosition = 0, sizeLock = 0;
 
+	//Automata
 	public void automaton() {
 		while (true) {
 			switch (state) {
@@ -29,6 +37,8 @@ public class Automaton {
 
 	}
 
+	//Estado 0 (Checar si un caracter de la cadena coincide con al menos uno de los componentes formados
+	//          por la expresión regular)
 	public void state0() {
 		if (input.length() - 1 < index) {
 			state = 3;
@@ -42,6 +52,8 @@ public class Automaton {
 		}
 	}
 
+	//Estado 1 (si alguna parte de la cadena coincide completamente con alguno de los componentes
+	//          se reemplaza la cadena)
 	public void state1() {
 		sizeLock = 0;
 		for (int i = 0; i < arrayExpressions.size(); i++) {
@@ -67,20 +79,9 @@ public class Automaton {
 				if (j >= arrayExpressions.get(i).length() - 1) {
 					input = input.substring(0, initialPosition) + word + input.substring(initialPosition
 							+ arrayExpressions.get(i).length() - lockOcurrences(arrayExpressions.get(i)) + sizeLock);
-//					System.out.println(input);
 
 					index = initialPosition + word.length();
-//					System.out.println(initialPosition);
-//					System.out.println(word.length());
-//					System.out.println(sizeLock);
-//					System.out.println(index);
-//					System.out.println("");
 					state = 0;
-//					cont++;
-//					if(cont == 3) {
-//						state = 3;
-//						return;
-//					}
 					return;
 				}
 				index++;
@@ -91,6 +92,7 @@ public class Automaton {
 
 	}
 
+	//Estado 2 (Cerradura)
 	public void state2(int i, int j) {
 		while (input.length() - 1 >= index) {
 			if (input.charAt(index) == arrayExpressions.get(i).charAt(j)) {
@@ -104,14 +106,20 @@ public class Automaton {
 	}
 
 	public void inputAutomaton() {
+		//Recibir 3 inputs principales(cadena, expresión regular, cadena reemplazadora)
 		Scanner sc = new Scanner(System.in);
 		input = sc.nextLine();
 		expression = sc.nextLine();
 		word = sc.nextLine();
-
+		
+		//Se descompone la expresión regular en componentes y se almacenan dentro de un ArrayList
 		expression = expression.replace("+", ",");
 		arrayExpressions = new ArrayList<>(Arrays.asList(expression.split(",")));
 
+		// Si alguno de los componentes contiene uno o más símbolos de "*" de descompone este mismo en más subcomponentes
+		// y se almacenan dentro de la misma ArrayList
+		// Ejemplo: de aba* se obtiene ab
+		//             c*b*a se obtiene b*a c*a y a
 		String tmp = "";
 		for (int i = 0; i < arrayExpressions.size(); i++) {
 			tmp = "";
@@ -126,15 +134,14 @@ public class Automaton {
 			}
 		}
 
-//		for (int i = 0; i < arrayExpressions.size(); i++) {
-//			System.out.println(arrayExpressions.get(i));
-//		}
-
+		//Se almacena dentro de un set solo el primer caracter de los componentes
+		//formados anteriormente
 		for (int i = 0; i < arrayExpressions.size(); i++) {
 			s.add(arrayExpressions.get(i).charAt(0));
 		}
 	}
-
+	
+	//Método que saca el numero de ocurrencias de "*"
 	public int lockOcurrences(String a) {
 		int count = 0;
 		for (int i = 0; i < a.length(); i++) {

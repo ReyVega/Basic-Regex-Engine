@@ -1,0 +1,19 @@
+abaa aab aaanbbb
+aba*+bbb*
+ccc
+Output:ccc accc aaanccc 
+
+abaaaabaaanbbb
+aba*+bbb*
+ccc
+Output:cccbaanccc
+
+Hola me llamo 	@goku
+mo+la+@gok
+
+Output: Ho me l 	u
+
+baaaaaaaaccddd ffff g
+a*c*+g+f*
+c
+Output: bcddd c c
